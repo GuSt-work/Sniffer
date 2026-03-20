@@ -1,0 +1,15 @@
+# Qt
+build-*
+*.pro.user
+*.pro.user.*
+*.qbs.user
+
+# C++
+*.o
+*.obj
+*.exe
+*.out
+
+# OS
+.DS_Store
+Thumbs.db
