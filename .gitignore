@@ -1,5 +1,6 @@
 # Qt
 build-*
+build/
 *.pro.user
 *.pro.user.*
 *.qbs.user

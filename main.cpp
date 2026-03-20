@@ -44,29 +44,6 @@ int main(int argc, char *argv[])
     }
     free(buffer1);
 
-    const char* ip_str = argv[1];
-
-    // --- Настраиваем структуру для getaddrinfo ---
-    ADDRINFOA hints = {0};
-    hints.ai_family = AF_INET;          // IPv4
-    hints.ai_socktype = SOCK_STREAM;    // TCP (можно 0 для любого)
-    hints.ai_flags = AI_NUMERICHOST;    // IP адрес, а не имя хоста
-
-    ADDRINFOA* result = nullptr;
-
-    int res = getaddrinfo(ip_str, nullptr, &hints, &result);
-    if(res != 0) {
-        std::cout << "getaddrinfo failed: " << gai_strerrorA(res) << std::endl;
-        WSACleanup();
-        return 1;
-    }
-
-    // --- Выводим информацию ---
-    for(ADDRINFOA* ptr = result; ptr != nullptr; ptr = ptr->ai_next) {
-        sockaddr_in* addr_in = (sockaddr_in*)ptr->ai_addr;
-        std::cout << "IP Address: " << inet_ntoa(addr_in->sin_addr) << std::endl;
-    }
-    return 0;
     //-------------------------------------
 
     //1 - семейство адресов протокола
@@ -99,12 +76,14 @@ int main(int argc, char *argv[])
     addr.sin_addr.s_addr = inet_addr(argv[1]);
     addr.sin_port = 0;
 
+    //После создания сокета определенного протокола следует приявязать его к адресу и порту
     if(bind(sock, (sockaddr*)&addr, sizeof(addr)) == SOCKET_ERROR){
         std::cout << "Bind failed\n";
         return 1;
     }
 
     //Включаем режим сниффера
+    //ioctlsocket - способ включать специальные режимы работы
     DWORD flag = 1;
     if(ioctlsocket(sock, SIO_RCVALL, &flag) != 0){
         std::cout << "ioctlsocket failed\n";
